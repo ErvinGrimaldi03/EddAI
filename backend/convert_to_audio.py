@@ -5,8 +5,8 @@ def extract_mp3(video, audio):
     if (video == audio):
         print("ERROR: source and destination file are the same")
         exit() # TODO CHANGE THIS TO SOMETHING THAT DOESNT STOP RUNNING
-    video = f"./data/{video}"
-    audio = f"./data/{audio}"
+    video = f"./backend/data/{video}"
+    audio = f"./backend/data/{audio}"
 
     if (op.isfile(audio)):
         print("ERROR: destination file exists already!")
@@ -15,4 +15,3 @@ def extract_mp3(video, audio):
         clip = moviepy.VideoFileClip(video)
         clip.audio.write_audiofile(audio)
 
-extract_mp3("test.mp4", "test.wav")

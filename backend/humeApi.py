@@ -1,9 +1,12 @@
 import requests
-from src.serializer import get_top_emotions
+import os
+
+
+from backend.src.serializer import get_top_emotions
 
 url = "https://api.hume.ai/v0/batch/jobs"
 def reques_post(file):
-    files = {"file": (f"{file}", open(f"./data/{file}", "rb"), "video/mp4")}
+    files = {"file": (f"{file}", open(f"./backend/data/{file}", "rb"), "video/mp4")}
     payload = {"json": "{}"}
     headers = {
         "accept": "application/json",

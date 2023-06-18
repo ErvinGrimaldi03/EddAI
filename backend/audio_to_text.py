@@ -1,6 +1,6 @@
 import os
 import assemblyai as aai
-from src.transformer import summarize_text
+from .src.transformer import summarize_text
 
 
 
@@ -14,11 +14,12 @@ def STT(file):
     aai.settings.api_key = APIKEY
     transcriber = aai.Transcriber()
 
-    transcript = transcriber.transcribe("./data/test.wav")
+
+    transcript = transcriber.transcribe(f"backend/data/{file}.wav")
 
     # transcript = transcriber.transcribe("./my-local-audio-file.wav")
     lista = []
-    with open(f"./data/text{audio}.txt", "w") as file:
+    with open(f"./backend/data/text{audio}.txt", "w") as file:
         for line in transcript.text:
             file.write(line)
             lista.append(line)
@@ -31,4 +32,3 @@ def summarize(audio):
     summarize_text(stringa)
 
 
-summarize("./data/test.wav")
