@@ -1,8 +1,9 @@
 import requests
+from src.serializer import get_top_emotions
 
 url = "https://api.hume.ai/v0/batch/jobs"
 def reques_post(file):
-    files = {"file": ("camera_video.mp4", open("./data/camera_video.mp4", "rb"), "video/mp4")}
+    files = {"file": (f"{file}", open(f"./data/{file}", "rb"), "video/mp4")}
     payload = {"json": "{}"}
     headers = {
         "accept": "application/json",
@@ -10,9 +11,8 @@ def reques_post(file):
     }
 
     response = requests.post(url, data=payload, files=files, headers=headers)
-    get_request(response["job_id"])
-
-
+    id = response.text.split(":")[-1][1:-2]
+    return get_request(id)
 
 
 def get_request(id):
@@ -24,5 +24,9 @@ def get_request(id):
     }
 
     response = requests.get(url, headers=headers)
-
     return response
+
+data = reques_post("camera_video.mp4").text
+top_emotions = get_top_emotions(data, top_n=5)
+for emotion in top_emotions:
+    print(f"{emotion['name']}: {emotion['score']}")
