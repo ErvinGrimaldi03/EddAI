@@ -1,29 +1,28 @@
-import asyncio
-import traceback
+import requests
 
-from utilities import download_file, print_emotions
+url = "https://api.hume.ai/v0/batch/jobs"
+def reques_post(file):
+    files = {"file": ("camera_video.mp4", open("./data/camera_video.mp4", "rb"), "video/mp4")}
+    payload = {"json": "{}"}
+    headers = {
+        "accept": "application/json",
+        "X-Hume-Api-Key": "loUmzY9D2mxqbAk8y3LQliecybDvuKYG43RRZDq0KkNXBJXB"
+    }
 
-from hume import HumeStreamClient
-from hume.models.config import FaceConfig
-
-filepath = download_file("https://storage.googleapis.com/hume-test-data/image/obama.png")
-
-
-async def main():
-    try:
-        client = HumeStreamClient("loUmzY9D2mxqbAk8y3LQliecybDvuKYG43RRZDq0KkNXBJXB")
-
-        # Enable face identification to track unique faces over the streaming session
-        config = FaceConfig(identify_faces=True)
-        async with client.connect([config]) as socket:
-            result = await socket.send_file(filepath)
-            emotions = result["face"]["predictions"][0]["emotions"]
-            print_emotions(emotions)
-    except Exception:
-        print(traceback.format_exc())
+    response = requests.post(url, data=payload, files=files, headers=headers)
+    get_request(response["job_id"])
 
 
-# When running the streaming API outside of a Jupyter notebook you do not need these lines.
-# Jupyter has its own async event loop, so this merges main into the Jupyter event loop.
-# To run this sample in a script with asyncio you can use `asyncio.run(main())`
-asyncio.run(main())
+
+
+def get_request(id):
+    url = "https://api.hume.ai/v0/batch/jobs/0cf41b41-edee-482c-b486-106f8e5acbd2/predictions"
+
+    headers = {
+        "accept": "application/json; charset=utf-8",
+        "X-Hume-Api-Key": "loUmzY9D2mxqbAk8y3LQliecybDvuKYG43RRZDq0KkNXBJXB"
+    }
+
+    response = requests.get(url, headers=headers)
+
+    return response
