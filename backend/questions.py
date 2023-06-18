@@ -1,54 +1,68 @@
-import nltk
-from nltk.tokenize import sent_tokenize
-from nltk.corpus import stopwords
-from nltk.util import ngrams
+import os
+import openai
 
-def score_question(question):
-    # Implement your scoring mechanism here
-    # You can consider factors like question length, presence of certain keywords, etc.
-    # Return a higher score for more meaningful questions
+def get_summ():
+    file_path = "./data/summary.txt"
+    file = open(file_path, 'r')
+    summary = file.read()
+    file.close()
+    summary += " WHAT IS THE TOPIC? GIVE ANSWER ONLY, NO OTHER WORDS BESIDES THE ANSWER"
+    return summary
+def retriveTopic():
 
-    # Example: Assign a higher score to longer questions
-    return len(question)
+    openai.api_key = "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"
 
-def generate_questions(text, n=10):
-    # Tokenize the text into sentences
-    sentences = sent_tokenize(text)
+    propy = get_summ()
+    start_sequence = "\nAI:"
+    restart_sequence = "\nHuman: "
 
-    # Prepare a set of stopwords to filter out common words
-    stop_words = set(stopwords.words('english'))
+    response = openai.Completion.create(
+      model="text-davinci-003",
+      prompt= propy,
+      temperature=0.9,
+      max_tokens=150,
+      top_p=1,
+      frequency_penalty=0,
+      presence_penalty=0.6,
+      stop=[" Human:", " AI:"])
 
-    questions = []
+    return response['choices'][0]['text']
 
-    for sentence in sentences:
-        # Remove punctuation and tokenize the sentence into words
-        words = nltk.word_tokenize(sentence.lower())
-        words = [word for word in words if word.isalpha()]
 
-        # Filter out stopwords
-        words = [word for word in words if word not in stop_words]
+def retrive_quiz():
+    openai.api_key = "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"
 
-        # Generate n-grams from the words
-        n = min(3, len(words))  # Consider up to trigrams
-        ngrams_list = list(ngrams(words, n))
+    topicy = retriveTopic()
+    start_sequence = "\nAI:"
+    restart_sequence = "\nHuman: "
 
-        # Generate questions from the n-grams and score them
-        for ngram in ngrams_list:
-            question = "What is " + " ".join(ngram) + "?"
-            score = score_question(question)
-            questions.append((question, score))
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt="The topic is " + topicy + " Generate 3 multiple choice questions about the topic. Don't be common, and don't give answers ",
+        temperature=0.9,
+        max_tokens=150,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0.6,
+        stop=[" Human:", " AI:"])
 
-    # Sort the questions based on score in descending order
-    questions.sort(key=lambda x: x[1], reverse=True)
+    return response['choices'][0]['text']
 
-    # Return the top n questions
-    top_questions = [q[0] for q in questions[:n]]
-    return top_questions
+def retrive_Notes():
+    openai.api_key = "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"
 
-# Example usage
-file_contents = open("./data/textlecture_audio.txt", "r").read()
-questions = generate_questions(file_contents, n=2)
+    topicy = retriveTopic()
+    start_sequence = "\nAI:"
+    restart_sequence = "\nHuman: "
 
-# Print the generated questions
-for i, question in enumerate(questions):
-    print(f"Question {i+1}: {question}")
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt="The topic is " + topicy + " Generate notes about the topic that could be useful to a college student. Be technical when possible",
+        temperature=0.9,
+        max_tokens=350,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0.6,
+        stop=[" Human:", " AI:"])
+
+    return response['choices'][0]['text']

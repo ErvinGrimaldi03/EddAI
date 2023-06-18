@@ -21,6 +21,10 @@ def summarize_text(text, min_length=30, max_length=150):
         chunk_summary = summarizer(chunk, max_length=max_length, min_length=min_length, do_sample=False)
         # Add this summary to the overall summary
         summary += chunk_summary[0]['summary_text']
-    print(summary)
+    lista = str(summary)
+
     # Return the overall summary
+    with open("./backend/data/summary.txt", "w") as file:
+        for i in lista:
+            file.write(i)
     return summary

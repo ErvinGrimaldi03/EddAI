@@ -33,4 +33,4 @@ data = reques_post("camera_video.mp4").text
 emotion_res = []
 top_emotions = get_top_emotions(data, top_n=5)
 for emotion in top_emotions:
-    print(f"{emotion['name']}: {emotion['score']}")
+    print(f"{emotion['name']}: {emotion['score']*100}")
