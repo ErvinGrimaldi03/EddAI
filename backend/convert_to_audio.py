@@ -14,3 +14,5 @@ def extract_mp3(video, audio):
     else:
         clip = moviepy.VideoFileClip(video)
         clip.audio.write_audiofile(audio)
+
+extract_mp3("test.mp4", "test.wav")
